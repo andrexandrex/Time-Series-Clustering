@@ -1,0 +1,480 @@
+\documentclass{beamer}
+\usepackage[T1]{fontenc}
+\usepackage{multicol}
+\usepackage{ragged2e}   %new code
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{varioref}
+\usepackage[square,sort,comma,super,authoryear]{natbib}
+\usepackage{xmpmulti}
+\usepackage{epsfig}
+\usepackage{subcaption}
+\captionsetup{compatibility=false}
+\usepackage{ru,graphics,hyperref,url} % 
+
+\addtobeamertemplate{block begin}{}{\justifying}
+\setbeamertemplate{section in toc}[sections numbered]
+\AtBeginSection[]
+{
+  \begin{frame}{Table of Contents}
+  \begin{multicols}{2}
+      \tableofcontents[currentsection]
+    \end{multicols}
+  \end{frame}
+
+}
+
+% The title of the presentation:
+%  - first a short version which is visible at the bottom of each slide;
+%  - second the full title shown on the title slide;
+
+\title[Clustering Time Series]{
+ Review de técnicas y algoritmos mais importantes }
+
+% Optional: a subtitle to be dispalyed on the title slide
+% \subtitle{Show where you're from}
+
+% The author(s) of the presentation:
+%  - again first a short version to be displayed at the bottom;
+%  - next the full list of authors, which may include contact information;
+\author[Andre Saul Juarez Castro]{
+  Andre Saul Juarez Castro\\\medskip
+  {\small {andrejuarezcastro@gmail.com}
+  }}
+
+% The institute:
+%  - to start the name of the university as displayed on the top of each slide
+%    this can be adjusted such that you can also create a Dutch version
+%  - next the institute information as displayed on the title slide
+\institute[Universidade Estadual de Campinas ]{
+ Laboratório de Séries Temporais, Econometria e Finanças do IMECC. -- CAREFS \\
+  }
+
+% Add a date and possibly the name of the event to the slides
+%  - again first a short version to be shown at the bottom of each slide
+%  - second the full date and event name for the title slide
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Table of Contents}
+    \begin{multicols}{2}
+    \tableofcontents
+    \end{multicols}
+\end{frame}
+
+% Section titles are shown in at the top of the slides with the current section 
+% highlighted. Note that the number of sections determines the size of the top 
+% bar, and hence the university name and logo. If you do not add any sections 
+% they will not be visible.
+\section{Motivaçao}
+\subsection{Introduçao}
+\begin{frame}
+    \frametitle{Motivação}
+    \textbf{\large O que é clustering?}
+    \framesubtitle{Introdução}
+    \justifying O objetivo do clustering é identificar estruturas em um conjunto de dados não rotulado, organizando objetivamente os dados em grupos homogêneos onde a similaridade entre os objetos dentro do grupo é minimizada e a dissimilaridade entre os objetos de diferentes grupos é maximizada. Isso é independente do tipo de dado, como:
+
+    \begin{minipage}{0.3\textwidth}
+        \begin{itemize}
+            \item numérico
+            \item categórico
+            \item textual
+            \item espacial
+            \item temporal
+            \item etc...
+        \end{itemize}
+    \end{minipage}
+    \begin{minipage}{0.7\textwidth}
+        \includegraphics[width=\textwidth]{2hierarchicalclustering.jpg}
+    \end{minipage}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Motivação}
+    \textbf{\large O que é time series clustering?}
+    \framesubtitle{Introdução}
+    \justifying Agrupa sequências de dados ordenados no tempo. O objetivo é identificar padrões ou tendências similares em séries temporais, organizando-as em grupos onde as sequências dentro de um grupo têm comportamentos semelhantes ao longo do tempo.
+
+   \begin{minipage}{0.4\textwidth}
+        \begin{itemize}
+        \item discrete-valued or real-valued
+        \item uniformly or non-uniformly sampled
+        \item univariate or multivariate
+        \item equal or unequal length
+        \end{itemize}
+    \end{minipage}
+    \hfill % Isso garante que a próxima minipage seja empurrada para a direita
+    \begin{minipage}{0.7\textwidth}
+        \includegraphics[width=\textwidth]{images/1time_kmeans.png}
+    \end{minipage}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Motivação}
+    \framesubtitle{Aplicações}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \centering
+      \textbf{Taxonomia do Agrupamento de Séries Temporais}
+      \begin{itemize}
+        \item Agrupamento de séries temporais completas
+        \item Agrupamento de subsequências
+        \item Agrupamento de pontos no tempo
+      \end{itemize}
+    \end{column}
+    
+    \begin{column}{0.5\textwidth}
+      \centering
+      \textbf{Aplicações gerais}
+      \begin{itemize}
+        \item Detecção de anomalias
+        \item Previsão e recomendação
+        \item Descoberta de padrões
+        \item Reconhecimento de mudanças dinâmicas em séries temporais
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Principais Abordagens para Clustering de Séries Temporais}
+  
+  \begin{columns}[T] % The [T] option aligns the columns' content at the top
+    \begin{column}{0.33\textwidth}
+      \centering
+      \textbf{Raw data base approach}
+      \begin{itemize}
+        \item High Dimensional data
+        \item No transformation or feature extraction
+      \end{itemize}
+    \end{column}
+    
+    \begin{column}{0.33\textwidth}
+      \centering
+      \textbf{Feature based Approach}
+      \begin{itemize}
+        \item Dimensionality Reduction
+        \item Feature extraction
+      \end{itemize}
+    \end{column}
+    
+    \begin{column}{0.33\textwidth}
+      \centering
+      \textbf{Model based Approach}
+      \begin{itemize}
+        \item Similarity based on model parameters
+        \item Model fitting
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+
+
+
+\section{Métodos e Métricas de Agrupamento de Séries Temporais}
+\subsection{Algoritmos de Agrupamento}
+\begin{frame}{k-means}
+\framesubtitle{Algoritmos de Agrupamento}
+\justifying
+
+O algoritmo k-means busca minimizar a soma dos quadrados das distâncias entre cada ponto e seu centróide. A função objetivo é:
+
+\[ J(C, \mu) = \sum_{i=1}^{k} \sum_{x \in C_i} ||x - \mu_i||^2 \]
+
+Onde:
+\begin{itemize}
+    \item \( J \) é a função objetivo.
+    \item \( C \) é o conjunto de clusters.
+    \item \( \mu \) é o conjunto de centróides.
+    \item \( C_i \) é o i-ésimo cluster.
+    \item \( \mu_i \) é o centróide do i-ésimo cluster.
+\end{itemize}
+
+\end{frame}
+\begin{frame}{Fuzzy k-means}
+\framesubtitle{Algoritmos de Agrupamento}
+\justifying
+
+O algoritmo Fuzzy k-means busca minimizar a dispersão dos dados em relação aos centróides ponderados pelo seu grau de pertença. A função objetivo é:
+
+\[ J_m(U, V) = \sum_{i=1}^{n} \sum_{j=1}^{k} u_{ij}^m ||x_i - v_j||^2 \]
+
+\begin{minipage}{0.4\textwidth}
+\begin{itemize}
+    \item[\tiny\( \bullet \)] \tiny\( J_m \) é a função objetivo.
+    \item[\tiny\( \bullet \)] \tiny\( U \) é a matriz de pertença.
+    \item[\tiny\( \bullet \)] \tiny\( V \) é o conjunto de centróides.
+    \item[\tiny\( \bullet \)] \tiny\( u_{ij} \) é o grau de pertença do i-ésimo ponto ao j-ésimo cluster.
+    \item[\tiny\( \bullet \)] \tiny\( m \) é o parâmetro de fuziness.
+    \item[\tiny\( \bullet \)] \tiny\( x_i \) é o i-ésimo ponto de dados.
+    \item[\tiny\( \bullet \)] \tiny\( v_j \) é o j-ésimo centróide.
+\end{itemize}
+\end{minipage}
+\hfill
+\begin{minipage}{0.65\textwidth}
+Para minimizar \( J_m \), derivamos em relação a \( V \) e \( u \) e atualizamos os centróides e a matriz de pertença iterativamente até a convergência.
+\end{minipage}
+\end{frame}
+
+\begin{frame}{Otimização do Fuzzy k-means}
+\framesubtitle{Algoritmos de Agrupamento}
+\justifying
+
+As fórmulas diferenciadas em relação a \( v \) e \( u \) são:
+
+\[ v_i = \frac{\sum_{k=1}^{n} u_{ik}^m x_k}{\sum_{k=1}^{n} u_{ik}^m} \quad \text{(4)} \quad \quad u_{ik} = \frac{\left( \frac{1}{||x_k - v_i||^2} \right)^{\frac{1}{m-1}}}{\sum_{j=1}^{c} \left( \frac{1}{||x_k - v_j||^2} \right)^{\frac{1}{m-1}}} \quad \text{(5)} \]
+
+Algoritmo de otimização:
+
+
+\begin{enumerate}
+    \item Escolha \( c \) (2 ≤ \( c \) ≤ \( n \)), \( m \) (1 < \( m \) < ∞) e \( \epsilon \) (um pequeno número para parar o procedimento iterativo). Defina o contador \( l = 0 \) e inicialize a matriz de pertença, \( U^{(l)} \).
+    \item Calcule o centro do cluster \( v_i^{(l)} \) usando a Eq. (4).
+    \item Atualize a matriz de pertença \( U^{(l+1)} \) usando a Eq. (5). Se \( x_k \neq v_i^{(l)} \), defina \( u_{jk} = 1 \) (ou 0) se \( j = (ou \neq) i \).
+    \item Compute \( \delta = ||U^{(l+1)} - U^{(l)}|| \). Se \( \delta > \epsilon \), incremente \( l \) e volte ao Passo 2. Se \( \delta \leq \epsilon \), pare.
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}{Self Organizing Maps (SOMs)}
+\framesubtitle{Redes Neurais e Mapeamento Topológico}
+\justifying
+
+Self-organizing maps (SOMs) são redes neurais com neurônios organizados em uma estrutura de baixa dimensão, frequentemente bidimensional. Desenvolvidos por Kohonen, são treinados através de um processo iterativo não supervisionado.
+
+\begin{columns}
+\begin{column}{0.45\textwidth}
+\begin{itemize}\footnotesize{
+    \item Atribuição de pequenos valores aleatórios aos vetores de peso \( w \) dos neurônios.
+    \item  A distância euclidiana entre o padrão de entrada e o vetor de peso é calculada para todos os neurônios.
+    \item Atualização: O neurônio com a menor distância é marcado como \( t \). Dependendo da vizinhança \( Nt \) em torno de \( t \), seu peso é atualizado.}
+\end{itemize}
+
+A topologia dos dados no espaço de entrada é preservada durante o mapeamento. No entanto, SOMs podem não ser ideais para séries temporais de comprimento desigual.
+\end{column}
+
+\begin{column}{0.65\textwidth}
+\vspace*{-5cm}\hspace*{10cm} % Ajuste este valor conforme necessário
+\small{
+\[ wi (l + 1) = \vspace*{0.5cm}
+\left\{ \begin{array}{ll}
+wi (l) + \eta(l)[x(l) - wi (l)] & \mbox{if } i \in Nt (l), \\
+wi (l) & \mbox{if } i \notin Nt (l).
+
+\end{array} \right. \]}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+\subsection{Dissimilarity Measures}
+\begin{frame}{Euclidean and Minkowski}
+  \frametitle{Euclidean and Minkowski distances}
+  \framesubtitle{Dissimilarity Measures}
+  \justifying
+  They quantify the difference or distance between two data points. 
+
+  \begin{columns}
+    \begin{column}{0.45\textwidth}
+        \centering
+        \textbf{Euclidean Distance} \\
+        \[ d(p,q) = \sqrt{\sum_{i=1}^{n} (q_i - p_i)^2} \]
+        \vspace{1em} % Add vertical space here
+    \end{column}
+    \begin{column}{0.45\textwidth}
+        \centering
+        \textbf{Minkowski Distance} \\
+        \[ d(p,q) = \left( \sum_{i=1}^{n} |q_i - p_i|^p \right)^{\frac{1}{p}} \]
+        (for general value of \( p \))
+    \end{column}
+\end{columns}
+
+\end{frame}
+\begin{frame}{DWT}
+  \frametitle{Dynamic Time Warping (DTW) Distance}
+    \framesubtitle{Dissimilarity Measures}
+  \centering
+  
+  \textbf{DTW Distance} \\
+  \vspace{1em}
+  Given two time series \( Q \) and \( C \) of lengths \( m \) and \( n \) respectively, the DTW distance is defined as:
+  \[ DTW(Q, C) = \min \sqrt{\sum_{i=1}^{m} \sum_{j=1}^{n} (q_i - c_j)^2} \]
+  subject to certain constraints (e.g., boundary conditions, continuity, and monotonicity).
+  
+  \vspace{1em}
+  The DTW algorithm finds the optimal alignment between two time series by "warping" the time dimension.
+  
+  \vspace{1em}
+
+\end{frame}
+
+\begin{frame}{Other Measures of Dissimilarity in Time Series}
+\framesubtitle{Dissimilarity Measures}
+\justifying
+
+\textbf{Compression-based similarity} (Suitable for short and long time-series):
+\begin{itemize}
+    \item CDM 
+    \item Autocorrelation
+    \item Short time-series distance 
+    \item Pearson’s correlation coefficient and related distances 
+    \item Cosine wavelets 
+\end{itemize}
+
+\textbf{Feature-based similarity} (Proper for long time-series):
+\begin{itemize}
+    \item Statistics
+    \item Coefficients
+\end{itemize}
+
+\textbf{Model-based similarity} (Proper for long time-series):
+\begin{itemize}
+    \item HMM 
+    \item ARMA 
+\end{itemize}
+
+\end{frame}
+
+
+\subsection{Prototypes}
+% Frame 1: Definition of Prototypes in Time Series Clustering
+\begin{frame}
+  \frametitle{Protótipos em Clustering de Séries Temporais}
+  \framesubtitle{Definição}
+  \justifying
+  Prototypes are used in time series clustering (TSC) to represent the central tendency or the most representative example of a cluster. 
+    \newline   \includegraphics[width=\textwidth]{4_prototype.png}  
+\end{frame}
+
+% Frame 2: Types of Prototypes in Time Series Clustering
+\begin{frame}
+  \frametitle{Tipos de Protótipos em Clustering de Séries Temporais}
+  \framesubtitle{Medoids, Médias e Busca Local}
+  \justifying
+  Diferentes tipos de protótipos são utilizados para representar clusters em séries temporais:
+
+  \begin{itemize}
+    \item \textbf{Medoids}: Minimiza a soma das distâncias para todas as outras séries no cluster.
+    \item \textbf{Averaging}: A média (ou centroide) de um cluster é calculada tomando a média ponto a ponto de todas as séries temporais no cluster. Isso pode ser sensível a outliers, mas é eficaz para dados bem comportados.
+      \begin{itemize}
+        \item \textit{Equal length}: Assegura que todos os protótipos têm o mesmo comprimento.
+        \item \textit{Variations for Non Elastic metrics}:
+            \begin{itemize}
+                \item SADTW (Shape Averaging DTW): Uma variação que considera a forma das séries temporais durante a média.
+            \end{itemize}
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+
+        
+
+\subsection{Metricas de evaluaçao}
+
+\begin{frame}
+  \frametitle{Metricas de evaluaçao}
+  \framesubtitle{Internal vs External Index}
+\includegraphics[width=0.8\textwidth]{3_criteria_measurements.png}
+\end{frame}
+
+\begin{frame}
+  \frametitle{External Index and Purity Measurement}
+  \framesubtitle{Evaluating Clustering Quality}
+  
+  \begin{block}{External Index}
+    An external index evaluates the clustering result by comparing it to a pre-defined ground truth or external standard.
+  \end{block}
+  
+  \begin{block}{Purity Measurement}
+    Purity quantifies the accuracy of clustering by assigning each cluster to the most frequent class within it and calculating the proportion of correctly assigned objects. It ranges from 0 (poor clustering) to 1 (perfect clustering). However, purity alone can be misleading if the number of clusters is large.
+  \end{block}
+\end{frame}
+\begin{frame}
+    \[ \text{Purity}(\Omega, C) = \frac{1}{N} \sum_{k} \max_j | \omega_k \cap c_j | \]
+    where:
+    \begin{itemize}
+      \item \(\Omega = \{\omega_1, \omega_2, ..., \omega_K\}\) is the set of ground truth classes.
+      \item \(C = \{c_1, c_2, ..., c_K\}\) is the set of clusters formed by the algorithm.
+      \item \(N\) is the total number of data points.
+      \item \(|\omega_k \cap c_j|\) is the number of data points in the intersection of ground truth class \(\omega_k\) and cluster \(c_j\).
+    \end{itemize}
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{Internal Indices for Clustering Evaluation}
+  \framesubtitle{A Spectrum of Measures}
+\textbf{\large Ground truth is unknown}
+  \begin{itemize}
+    \item Sum of Squared Error (SSE)
+    \item Silhouette Index
+    \item Davies-Bouldin Index
+    \item Calinski-Harabasz Index
+    \item Dunn Index
+    \item R-squared Index
+    \item Hubert-Levin (C-index)
+    \item etc
+  \end{itemize}
+  
+  \begin{alertblock}{Note}
+    Each index has its own strengths and weaknesses and is suitable for different types of clustering evaluation scenarios.
+  \end{alertblock}
+  
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Internal Index: Silhouette Coefficient}
+  \framesubtitle{Quantitative Evaluation of Clustering}
+
+  \begin{block}{Silhouette Coefficient}
+    The Silhouette Coefficient combines ideas of cohesion and separation, measuring how similar an object is to its own cluster compared to other clusters:
+    \[ s(i) = \frac{b(i) - a(i)}{\max\{a(i), b(i)\}} \]
+    where:
+    \begin{itemize}
+      \item \( a(i) \) is the average distance from the \( i \)-th object to the other objects in the same cluster.
+      \item \( b(i) \) is the minimum average distance from the \( i \)-th object to objects in a different cluster, minimized over all clusters.
+      \item \( s(i) \) is the silhouette coefficient for object \( i \), which ranges from -1 to 1.
+    \end{itemize}
+  \end{block}
+  
+  \begin{alertblock}{Note}
+    A high silhouette coefficient indicates that objects are well matched to their own cluster and poorly matched to neighboring clusters. The average silhouette coefficient over all objects can be used as an overall measure of clustering quality.
+  \end{alertblock}
+  
+\end{frame}
+\section{Conclusoes}
+\begin{frame}
+\frametitle{Conclusion}
+\framesubtitle{Partial Results}
+\end{frame}
+
+\subsection{ Desafios e Direções Futuras}
+\begin{frame}
+  \frametitle{Conclusion}
+  \framesubtitle{Desafis e }
+\end{frame}
+
+
+\appendix
+
+\begin{frame}[allowframebreaks]{References}
+    \tiny
+    \bibliography{bib}
+    \cite{Aghabozorgi2015}
+    \bibliographystyle{plainnat}
+\end{frame}
+
+\end{document}
+
+
